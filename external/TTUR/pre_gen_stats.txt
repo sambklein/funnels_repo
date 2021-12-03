@@ -1,0 +1,24 @@
+#!/bin/sh
+#SBATCH --job-name=delete
+#SBATCH --cpus-per-task=1
+#SBATCH --time=00-12:00:00
+#SBATCH --partition=shared-cpu,private-dpnc-cpu
+#SBATCH --output=/home/users/k/kleins/MLproject/surVAE/jobs/slurm-%A-%x_%a.out
+#SBATCH --chdir=/home/users/k/kleins/MLproject/surVAE/
+#SBATCH --mem=10GB
+#SBATCH -a 0-1
+export XDG_RUNTIME_DIR=""
+module load GCCcore/8.2.0 Singularity/3.4.0-Go-1.12
+
+datasets=(cifar-10-fast)
+num_bits=(5 8)
+
+srun singularity exec --nv -B /home/users/k/kleins/scratch/images/:/scratch/ /home/users/k/kleins/MLproject/surVAE/container/pytorch.sif\
+	python3 /home/users/k/kleins/MLproject/surVAE/external/TTUR/dump_images.py \
+	 --dataset ${datasets[`expr ${SLURM_ARRAY_TASK_ID} / 2 % 1`]} \
+	 --num_bits ${num_bits[`expr ${SLURM_ARRAY_TASK_ID} / 1 % 2`]}
+
+srun singularity exec --nv -B /home/users/k/kleins/scratch/images/:/scratch/ /home/users/k/kleins/MLproject/surVAE/container/tensorflow_1.15.sif\
+	python3 /home/users/k/kleins/MLproject/surVAE/external/TTUR/precalcluate_stats.py \
+	 ${datasets[`expr ${SLURM_ARRAY_TASK_ID} / 2 % 1`]}_${num_bits[`expr ${SLURM_ARRAY_TASK_ID} / 2 % 1`]} \
+	 ${datasets[`expr ${SLURM_ARRAY_TASK_ID} / 2 % 1`]}_${num_bits[`expr ${SLURM_ARRAY_TASK_ID} / 1 % 2`]}.npz

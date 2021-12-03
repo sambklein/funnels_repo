@@ -1,0 +1,90 @@
+# Object file
+*.o
+
+# Data files
+/images
+/container
+/logs
+/jobs
+/experiments/data
+/experiments/logs
+funnels/data/downloads
+collate/data
+/data/saved_models
+/data/slims
+submit.txt
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Mac
+.DS_Store
+
+# PyCharm
+/inspectionProfiles
+/.idea
+*.xml
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+*.eggs
+
+# Django stuff:
+local_settings.py
+db.sqlite3
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Singularity image
+*.sif
+
+# latex files
+*.pdf
+*.dvi
+*.toc
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.bak
+*.idx
+*.ilg
+*.ind
+*.nav
+*.snm
+*.synctex.gz
+
+# images
+*.png
+
+#things that shouldn't be VCd
+grid.py
+submit.txt
+submit.sh

@@ -1,0 +1,20 @@
+#!/bin/sh
+#SBATCH --job-name=delete
+#SBATCH --cpus-per-task=1
+#SBATCH --time=00-12:00:00
+#SBATCH --partition=shared-gpu,private-dpnc-gpu
+#SBATCH --output=/home/users/k/kleins/MLproject/surVAE/jobs/slurm-%A-%x_%a.out
+#SBATCH --chdir=/home/users/k/kleins/MLproject/surVAE/
+#SBATCH --mem=10GB
+#SBATCH --gpus=1
+#SBATCH -a 0-1
+export XDG_RUNTIME_DIR=""
+module load GCCcore/8.2.0 Singularity/3.4.0-Go-1.12
+
+dataset=(cifar-10-fast_8)
+exp_name=(funnel_48_0)
+
+srun singularity exec --nv -B /home/users/k/kleins/scratch/images/:/scratch/ /home/users/k/kleins/MLproject/surVAE/container/tensorflow_1.15.sif\
+	python3 /home/users/k/kleins/MLproject/surVAE/external/TTUR/fid.py  \
+	 /scratch/${dataset[`expr ${SLURM_ARRAY_TASK_ID} / 2 % 1`]}.npz \
+	 /scratch/${dataset[`expr ${SLURM_ARRAY_TASK_ID} / 2 % 1`]}_${exp_name[`expr ${SLURM_ARRAY_TASK_ID} / 2 % 1`]}_generated

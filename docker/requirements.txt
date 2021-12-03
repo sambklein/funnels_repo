@@ -1,0 +1,9 @@
+pandas
+h5py
+numpy
+seaborn
+scipy
+jupyter
+nflows
+tensorboardX
+tables
