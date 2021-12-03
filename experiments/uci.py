@@ -369,7 +369,7 @@ if args.vae:
     # layers = [512, 512, 512]
     layers = [width] * depth
     flow = VAE(features, features - args.vae, layers, dropout=args.vae_drp, batch_norm=args.vae_batch_norm,
-               layer_norm=args.vae_layer_norm)
+               layer_norm=args.vae_layer_norm).to(device)
 elif args.mlp:
     print('Training a F-MLP')
     ls = features - args.mlp
@@ -524,12 +524,11 @@ flow.eval()
 with torch.no_grad():
     log_likelihood = torch.Tensor([])
     for batch in tqdm(test_loader):
-        with set_default_tensor_type():
-            log_density = flow.log_prob(batch.to(device)) 
-            log_likelihood = torch.cat([
-                log_likelihood,
-                log_density
-            ])
+        log_density = flow.log_prob(batch.to(device)).to(torch.device('cpu'))
+        log_likelihood = torch.cat([
+            log_likelihood,
+            log_density
+        ])
 path = os.path.join(log_dir, '{}-{}-log-likelihood.npy'.format(
     args.dataset_name,
     args.base_transform_type
